@@ -4,12 +4,13 @@ ext {
     appName = 'hello-flink'
     mainClass = 'io.amient.flink'
     javaVersion = '1.8'
-    scalaVersion = '2.11.7'
+    flinkVersion = '1.1.2'
+    scalaVersion = '2.10.6'
     baseScalaVersion = scalaVersion.split("\\.\\d+\$")[0]
 }
 
 apply plugin: 'java'
-apply plugin: 'scala'
+//apply plugin: 'scala'
 apply plugin: 'idea'
 
 sourceCompatibility = javaVersion
@@ -35,7 +36,7 @@ repositories {
 
 sourceSets {
     main {
-        compileClasspath += [configurations.provided]
+        compileClasspath += configurations.provided
     }
 }
 
@@ -45,24 +46,27 @@ idea {
     }
 }
 
-task scalaTest(dependsOn: ['testClasses'], type: JavaExec) {
-    main = 'org.scalatest.tools.Runner'
-    args = ['-R', 'build/classes/test', '-o']
-    classpath = sourceSets.test.runtimeClasspath
-}
-test.dependsOn scalaTest
+//task scalaTest(dependsOn: ['testClasses'], type: JavaExec) {
+//    main = 'org.scalatest.tools.Runner'
+//    args = ['-R', 'build/classes/test', '-o']
+//    classpath = sourceSets.test.runtimeClasspath
+//}
+//test.dependsOn scalaTest
 test.systemProperties 'property': 'value'
 
 dependencies {
-    compile 'org.scala-lang:scala-library:' + scalaVersion
+//    compile 'org.scala-lang:scala-library:' + scalaVersion
     compile group: 'org.slf4j', name:'slf4j-api', version: '1.7.6'
     compile group: 'org.slf4j', name:'slf4j-log4j12', version: '1.7.6'
 
-    compile group: 'org.apache.flink', name: 'flink-core', version: '1.1.0'
+    compile group: 'org.apache.flink', name: 'flink-java', version: flinkVersion
+    compile group: 'org.apache.flink', name: 'flink-streaming-java_' + baseScalaVersion, version: flinkVersion
+    compile group: 'org.apache.flink', name: 'flink-clients_' + baseScalaVersion, version: flinkVersion
     compile group: 'net.sourceforge.htmlcleaner', name: 'htmlcleaner', version: '2.6.1'
+    compile group: 'org.schwering', name: 'irclib', version: '1.10'
 
-    testCompile group: 'org.scalatest', name: 'scalatest_' + baseScalaVersion, version: '2.2.6'
-    testCompile group: 'org.scalacheck', name: 'scalacheck_' + baseScalaVersion, version: '1.12.5'
+//    testCompile group: 'org.scalatest', name: 'scalatest_' + baseScalaVersion, version: '2.2.6'
+//    testCompile group: 'org.scalacheck', name: 'scalacheck_' + baseScalaVersion, version: '1.12.5'
 }
 
 
@@ -77,6 +81,6 @@ build.dependsOn createStartScripts
 libsDirName = 'lib'
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.7'
+    gradleVersion = '3.1'
 }
 

@@ -1,7 +1,11 @@
+# 1. Wikipedia Demo
+
+
+# 2. Recursive Web Crawler Demo
+
 Web Crawler done as a recursive stream processor with Apache Flink
 
-
-# Topology
+## Topology
 
                                          URL Processor
                                  +--------------------------+
