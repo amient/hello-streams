@@ -7,17 +7,19 @@ import org.apache.beam.sdk.io.Read;
 import org.apache.beam.sdk.io.UnboundedSource;
 import org.apache.beam.sdk.options.PipelineOptions;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
-import org.apache.beam.sdk.transforms.Count;
-import org.apache.beam.sdk.transforms.Create;
 import org.apache.beam.sdk.transforms.DoFn;
 import org.apache.beam.sdk.transforms.ParDo;
 import org.apache.beam.sdk.values.PCollection;
+import org.joda.time.Instant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class BeamWikiMain {
     private static final Logger log = LoggerFactory.getLogger(BeamWikiMain.class);
@@ -44,27 +46,48 @@ public class BeamWikiMain {
 
     public static class BeamIRCSource extends UnboundedSource<String, NoOpCheckpointMark> {
 
+        private final String host;
+        private final int port;
+        private final String[] channels;
+
         public static BeamIRCSource of(String host, int port, String channels) {
-            return null;
+            return new BeamIRCSource(host, port, channels.split(","));
         }
 
         public BeamIRCSource(String host, int port, String[] channels) {
+//            client = new IRCSource(host, port, channels)
+            this.host = host;
+            this.port = port;
+            this.channels = channels;
+            log.info(host + ":" + port + " " + Arrays.toString(channels));
         }
 
         @Override
-        public List<? extends UnboundedSource<String, NoOpCheckpointMark>> generateInitialSplits(int desiredNumSplits, PipelineOptions options) throws Exception {
-            System.out.println("Desired num split = " + desiredNumSplits);
-            return null;
+        public List<BeamIRCSource> generateInitialSplits(int desiredNumSplits, PipelineOptions options) throws Exception {
+            List<BeamIRCSource> sources = new ArrayList();
+            int channelsPerSplit = Math.max(1, channels.length / desiredNumSplits);
+            for(int s = 0; s < Math.min(channels.length, desiredNumSplits); s ++) {
+                int splitSize = Math.min(channelsPerSplit, channels.length - s * channelsPerSplit);
+                String[] split = new String[splitSize];
+                for (int c = 0 ; c < splitSize; c ++ ) {
+                    split[c] = channels[s * channelsPerSplit + c];
+                }
+                log.info("Split " + s + " " + Arrays.toString(split));
+                sources.add(new BeamIRCSource(host, port, split));
+            }
+            return sources;
         }
 
         @Override
         public UnboundedReader<String> createReader(PipelineOptions options, @Nullable NoOpCheckpointMark checkpointMark) throws IOException {
+            //TODO UnboundedReader that wraps around the utility class IRCSource
             return null;
         }
 
         @Nullable
         @Override
         public Coder<NoOpCheckpointMark> getCheckpointMarkCoder() {
+            //TODO is there a NoOpCheckpointMarkCoder
             return null;
         }
 
