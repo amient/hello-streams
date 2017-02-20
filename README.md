@@ -1,4 +1,7 @@
-# 1. Wikipedia Demo
+# 1. Wikipedia Edits
+    a) Kafka Stream implementation
+    b) Flink implementation
+    c) Beam implementation
 
 
 # 2. Recursive Web Crawler Demo

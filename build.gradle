@@ -4,10 +4,12 @@ ext {
     appName = 'hello-flink'
     mainClass = 'io.amient.flink'
     javaVersion = '1.8'
-    flinkVersion = '1.1.2'
-    kafkaVersion = '0.10.1.1'
     scalaVersion = '2.10.6'
     baseScalaVersion = scalaVersion.split("\\.\\d+\$")[0]
+
+    flinkVersion = '1.1.2'
+    kafkaVersion = '0.10.1.1'
+    beamVersion = '0.5.0'
 }
 
 apply plugin: 'java'
@@ -71,6 +73,9 @@ dependencies {
     compile group: 'org.apache.flink', name: 'flink-java', version: flinkVersion
     compile group: 'org.apache.flink', name: 'flink-streaming-java_' + baseScalaVersion, version: flinkVersion
     compile group: 'org.apache.flink', name: 'flink-clients_' + baseScalaVersion, version: flinkVersion
+
+    compile group: 'org.apache.beam', name: 'beam-sdks-java-core', version: beamVersion
+    compile group: 'org.apache.beam', name: 'beam-runners-direct-java', version: beamVersion
 
 
 }

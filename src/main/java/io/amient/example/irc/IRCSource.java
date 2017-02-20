@@ -46,6 +46,8 @@ public class IRCSource implements Closeable, Serializable {
         this.channels = channels;
     }
 
+
+
     public void open() {
         queue = new LinkedBlockingQueue<>();
 
