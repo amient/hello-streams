@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package io.amient.example.kstream;
+package io.amient.example.kstreams;
 
 import io.amient.example.irc.IRCMessage;
 import io.amient.example.irc.IRCSource;
@@ -27,6 +27,7 @@ import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.KeyValue;
+import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.kstream.*;
 import org.apache.kafka.streams.processor.AbstractProcessor;
@@ -124,13 +125,13 @@ public class KStreamsWikiMain {
     private static KafkaStreams createWikipediaStreamsInstance(String bootstrapServers) {
         final Serde<String> stringSerde = Serdes.String();
 
-        KStreamBuilder builder = new KStreamBuilder();
+        StreamsBuilder builder = new StreamsBuilder();
         Properties props = new Properties();
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, "wikipedia-streams");
         props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 
 
-        KStream<String, String> wikipediaRaw = builder.stream(stringSerde, stringSerde, "wikipedia-raw");
+        KStream<String, String> wikipediaRaw = builder.stream("wikipedia-raw", Consumed.with(stringSerde, stringSerde));
 
         KStream<String, WikipediaMessage> editsParsed = wikipediaRaw.map(
                 (String user, String message) -> {
@@ -162,7 +163,7 @@ public class KStreamsWikiMain {
             }
         });
 
-        return new KafkaStreams(builder, props);
+        return new KafkaStreams(builder.build(), props);
 
     }
 

@@ -1,13 +1,13 @@
 ext {
     appName = 'hello-flink'
-    mainClass = 'io.amient.example.flink'
+    mainClass = 'io.amient.example.flink.FlinkWikiMain'
 }
 
 apply plugin: 'java'
 
 dependencies {
-    project(':common')
+    compile project(':common')
     compile group: 'org.apache.flink', name: 'flink-java', version: flinkVersion
-    compile group: 'org.apache.flink', name: 'flink-streaming-java_' + javaVersion, version: flinkVersion
-    compile group: 'org.apache.flink', name: 'flink-clients_' + javaVersion, version: flinkVersion
+    compile group: 'org.apache.flink', name: 'flink-streaming-java_2.11', version: flinkVersion
+    compile group: 'org.apache.flink', name: 'flink-clients_2.11', version: flinkVersion
 }

@@ -3,6 +3,17 @@
     b) Apache Flink implementation
     c) Apache Beam implementation
 
+Start local cluster
+
+    docker-compose up
+
+Create Topics
+
+    docker exec -it kafka_broker_1 /opt/kafka/current/bin/kafka-topics.sh --zookeeper localhost --create --topic wikipedia-raw --replication-factor 1 --partitions 4
+$ ./bin/kafka-topics.sh --zookeeper localhost --create --topic wikipedia-parsed --replication-factor 1 --partitions 4
+$ ./bin/kafka-topics.sh --zookeeper localhost --create --topic wikipedia-streams-wikipedia-edits-by-user-changelog \
+                        --replication-factor 1 --partitions 4
+
 
 # 2. Recursive Web Crawler Demo
 
