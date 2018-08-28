@@ -1,0 +1,10 @@
+apply plugin: 'java'
+
+dependencies {
+    compile group: 'net.sourceforge.htmlcleaner', name: 'htmlcleaner', version: '2.6.1'
+    compile group: 'org.schwering', name: 'irclib', version: '1.10'
+}
+
+
+
+

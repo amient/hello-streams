@@ -1,0 +1,14 @@
+ext {
+    appName = 'hello-beam'
+    mainClass = 'io.amient.example.beam'
+}
+
+apply plugin: 'java'
+
+
+dependencies {
+    project(':common')
+    compile group: 'org.apache.beam', name: 'beam-sdks-java-core', version: beamVersion
+    compile group: 'org.apache.beam', name: 'beam-runners-direct-java', version: beamVersion
+}
+

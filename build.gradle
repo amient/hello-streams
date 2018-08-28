@@ -1,97 +1,67 @@
-version = '0.0.1-SNAPSHOT'
-
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.9'
+}
 ext {
-    appName = 'hello-flink'
-    mainClass = 'io.amient.flink'
     javaVersion = '1.8'
-    scalaVersion = '2.10.6'
-    baseScalaVersion = scalaVersion.split("\\.\\d+\$")[0]
-
     flinkVersion = '1.1.2'
     kafkaVersion = '0.10.1.1'
     beamVersion = '0.5.0'
 }
 
-apply plugin: 'java'
-//apply plugin: 'scala'
-apply plugin: 'idea'
 
-sourceCompatibility = javaVersion
+allprojects {
 
-jar {
-    manifest {
-        attributes 'Main-Class': mainClass
+    plugins.withType(JavaPlugin).whenPluginAdded {
+
+        dependencies {
+
+            compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.6'
+            compile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.6'
+
+        }
+
+        libsDirName = 'lib'
+
+        sourceCompatibility = javaVersion
+
+        if (ext.has('mainClass')) {
+
+            task createStartScripts(type: CreateStartScripts) {
+                outputDir = file("build/scripts")
+                mainClassName = mainClass
+                applicationName = appName
+                classpath = jar.outputs.files
+            }
+
+            build.dependsOn createStartScripts
+
+            jar {
+                manifest {
+                    attributes 'Main-Class': mainClass
+                }
+                from {
+                    configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+                }
+            }
+        }
+
+        configurations {
+            provided
+            testCompile.extendsFrom provided
+        }
+
+        repositories {
+            mavenLocal()
+            mavenCentral()
+        }
+
+        sourceSets {
+            main {
+                compileClasspath += configurations.provided
+            }
+        }
+
     }
-    from {
-        configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-    }
 }
 
-configurations {
-    provided
-    testCompile.extendsFrom provided
-}
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
-sourceSets {
-    main {
-        compileClasspath += configurations.provided
-    }
-}
-
-idea {
-    module {
-        scopes.PROVIDED.plus += [configurations.provided]
-    }
-}
-
-//task scalaTest(dependsOn: ['testClasses'], type: JavaExec) {
-//    main = 'org.scalatest.tools.Runner'
-//    args = ['-R', 'build/classes/test', '-o']
-//    classpath = sourceSets.test.runtimeClasspath
-//}
-//test.dependsOn scalaTest
-test.systemProperties 'property': 'value'
-
-dependencies {
-//    testCompile group: 'org.scalatest', name: 'scalatest_' + baseScalaVersion, version: '2.2.6'
-//    testCompile group: 'org.scalacheck', name: 'scalacheck_' + baseScalaVersion, version: '1.12.5'
-//    compile 'org.scala-lang:scala-library:' + scalaVersion
-
-    compile group: 'org.slf4j', name:'slf4j-api', version: '1.7.6'
-    compile group: 'org.slf4j', name:'slf4j-log4j12', version: '1.7.6'
-    compile group: 'net.sourceforge.htmlcleaner', name: 'htmlcleaner', version: '2.6.1'
-    compile group: 'org.schwering', name: 'irclib', version: '1.10'
-
-    compile group: 'org.apache.kafka', name: 'kafka-clients', version: kafkaVersion
-    compile group: 'org.apache.kafka', name: 'kafka-streams', version: kafkaVersion
-
-    compile group: 'org.apache.flink', name: 'flink-java', version: flinkVersion
-    compile group: 'org.apache.flink', name: 'flink-streaming-java_' + baseScalaVersion, version: flinkVersion
-    compile group: 'org.apache.flink', name: 'flink-clients_' + baseScalaVersion, version: flinkVersion
-
-    compile group: 'org.apache.beam', name: 'beam-sdks-java-core', version: beamVersion
-    compile group: 'org.apache.beam', name: 'beam-runners-direct-java', version: beamVersion
-
-
-}
-
-
-task createStartScripts(type: CreateStartScripts) {
-    outputDir = file("build/scripts")
-    mainClassName = mainClass
-    applicationName = appName
-    classpath = jar.outputs.files
-}
-
-build.dependsOn createStartScripts
-libsDirName = 'lib'
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '3.1'
-}
 

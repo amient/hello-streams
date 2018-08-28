@@ -1,0 +1,15 @@
+version = '0.0.1-SNAPSHOT'
+
+ext {
+    appName = 'hello-flink'
+    mainClass = 'io.amient.flink'
+}
+
+apply plugin: 'java'
+
+dependencies {
+    project(':common')
+    compile group: 'org.apache.kafka', name: 'kafka-clients', version: kafkaVersion
+    compile group: 'org.apache.kafka', name: 'kafka-streams', version: kafkaVersion
+}
+

@@ -1,12 +1,12 @@
 # 1. Wikipedia Edits
     a) Kafka Stream implementation
-    b) Flink implementation
-    c) Beam implementation
+    b) Apache Flink implementation
+    c) Apache Beam implementation
 
 
 # 2. Recursive Web Crawler Demo
 
-Web Crawler done as a recursive stream processor with Apache Flink
+Web Crawler done as a recursive stream processor
 
 ## Topology
 
